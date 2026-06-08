@@ -4,12 +4,26 @@
   "description": "E-Commerce App",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jagroop100/shop-ease-1.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Jagroop100/shop-ease-1/issues"
+  },
+  "homepage": "https://github.com/Jagroop100/shop-ease-1#readme",
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }
