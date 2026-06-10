@@ -1,0 +1,40 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+# ADD THIS BLOCK
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Verify CI Run Status
+        run: |
+          echo "CI conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Commit: ${{ github.event.workflow_run.head_sha }}"
+          echo "Branch: ${{ github.event.workflow_run.head_branch }}"
+
+          if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
+            echo "CI did not pass. Aborting deployment."
+            exit 1
+          fi
+
+      - name: Simulate Deployment
+        run: |
+          echo "All checks passed. Starting deployment..."
+          echo "Deploying commit: ${{ github.event.workflow_run.head_sha }}"
+          echo "Deployment successful!"
