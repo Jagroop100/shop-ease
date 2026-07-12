@@ -1,18 +1,16 @@
 console.log("ShopEase Loaded Successfully");
 
-// Get elements
+
 const productGrid = document.getElementById("productGrid");
 const cartItems = document.getElementById("cartItems");
 const totalPrice = document.getElementById("totalPrice");
 const clearCartBtn = document.getElementById("clearCartBtn");
+const checkoutBtn = document.getElementById("checkoutBtn");
 const searchBox = document.getElementById("searchBox");
 
-// Load cart from localStorage
+
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-/* ===========================
-   PRODUCTS PAGE
-=========================== */
 
 if (productGrid) {
 
@@ -125,6 +123,84 @@ if (clearCartBtn) {
         cart = [];
         localStorage.removeItem("cart");
         loadCart();
+    });
+
+}
+
+
+if (checkoutBtn) {
+
+    checkoutBtn.addEventListener("click", async function () {
+
+        if (cart.length === 0) {
+
+            alert("Your cart is empty!");
+            return;
+
+        }
+
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+        try {
+
+            // Payment Request
+            const paymentResponse = await fetch("/payment", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    amount: total,
+                    paymentMethod: "Credit Card"
+
+                })
+
+            });
+
+            const paymentResult = await paymentResponse.json();
+
+            alert(paymentResult.message);
+
+            // Email Notification
+            await fetch("/notifications/email", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    email: "customer@example.com"
+
+                })
+
+            });
+
+            // Clear Cart
+            cart = [];
+
+            localStorage.removeItem("cart");
+
+            loadCart();
+
+            alert("Order placed successfully!");
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            alert("Payment Failed!");
+
+        }
+
     });
 
 }
